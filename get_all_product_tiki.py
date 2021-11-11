@@ -40,5 +40,4 @@ if __name__ == "__main__":
 
     browser = init_browser()
     product_urls = get_all_product_url(browser, shop_url)
-
-    # browser.close()
+    browser.close()
