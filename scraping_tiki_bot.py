@@ -124,11 +124,8 @@ def search_function(browser, url_list):
 if __name__ == "__main__":
 
     browser = init_browser()
-
     item_list = get_all_product_url(browser, 'https://tiki.vn/cua-hang/thiet-bi-y-te-gia-dinh-hme')
-
     search_function(browser, item_list)
-
     browser.close()
 
     
