@@ -16,16 +16,20 @@ from scraping_tiki_bot import search_function
 def do_work(args):
     browser = init_browser()
 
-    if len(args) == 1:
-        item_list = get_all_product_url(browser, 'https://tiki.vn/cua-hang/thiet-bi-y-te-gia-dinh-hme')
-        with open('product_list.txt', 'w') as wFile:
-            for item in item_list:
-                wFile.write(item+'\n')
-            wFile.close()
-    else:
-        with open(args[-1], 'r') as rFile:
-            item_list = rFile.readlines()
-            rFile.close()
+    # if len(args) == 1:
+    #     item_list = get_all_product_url(browser, 'https://tiki.vn/cua-hang/thiet-bi-y-te-gia-dinh-hme')
+    #     with open('product_list.txt', 'w') as wFile:
+    #         for item in item_list:
+    #             wFile.write(item+'\n')
+    #         wFile.close()
+    # else:
+    #     with open(args[-1], 'r') as rFile:
+    #         item_list = rFile.readlines()
+    #         rFile.close()
+
+    with open('product_list.txt', 'r') as rFile:
+        item_list = rFile.readlines()
+        rFile.close()
 
     search_function(browser, item_list)
     browser.close()

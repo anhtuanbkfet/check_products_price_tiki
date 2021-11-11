@@ -12,11 +12,11 @@ def save_to_xls_file(products):
     ws = wb.add_sheet('Tiki-Report')
 
     ws.write(0,0,"Product name")    
-    ws.write(0,1,"Our price")
-    ws.write(0,2,"Seller price")
-    ws.write(0,3,"Seller name")
-    ws.write(0,4,"Our product Url")
-    ws.write(0,5,"Seller product Url")
+    ws.write(0,1,"My price")
+    ws.write(0,2,"Other-seller price")
+    ws.write(0,3,"Other-seller name")
+    ws.write(0,4,"My Url")
+    ws.write(0,5,"Other-seller Url")
 
     for i, product in enumerate(products):
         
@@ -30,16 +30,22 @@ def save_to_xls_file(products):
     #close excel file:
     wb.save('tiki_report.xls')
 
+def get_product_id(url):
+    pid = url.strip().split('?spid=')[-1]
+    return int(pid)
+
 def find_lowest_price_product(products):
-    "find product have the lowest price"
-    p_min = products[0]
-    for product in products:
-        if product['seller_price'] < p_min['seller_price']:
-            p_min = product
+    """
+    find product have the lowest price
+    """
+    products = sorted(products, key=lambda d: d['seller_price']) 
+    if len(products) == 1:
+        p_min = products[0]
+    else:
+        p_min = products[1]
     return p_min
 
-
-def tiki_search_products(browser, my_url):
+def tiki_search_sililiar_products(browser, my_url):
     
     p_string = my_url.split('tiki.vn/')[-1].split('.html')[0]
     p_id = my_url.split('?spid=')[-1]
@@ -64,12 +70,11 @@ def tiki_search_products(browser, my_url):
         p_price = p_price.replace(".", "").replace(' ', '')
         p_price = int(p_price)
 
-        print('Searching similiar products of: \n{}\n Price: {}₫'.format(p_name, p_price))
+        print('Searching similiar products of: \n{}\nPrice: {}₫'.format(p_name, p_price))
         # book_list = browser.find_elements_by_class_name("product-item")
         book_list = browser.find_elements_by_class_name('styles__BaseRow-sc-15nb5z1-1')
 
-
-        # choose data and write to csv
+        count = 1
         for book in book_list:
             try:
                 # ----------------
@@ -86,15 +91,14 @@ def tiki_search_products(browser, my_url):
                 url = url.get_attribute("href")
                 url = url.replace(' ', '').replace('\t', '')
                 # ----------------
-                print('A similiar products found: \n-Seller: {}\n-Price: {} ₫ \n-Url: {}'.format(seller_name, price, url))
+                print('{}. A similiar products found: \n-Seller: {}\n-Price: {} ₫ \n-Url: {}'.format(count, seller_name, price, url))
 
-                mid = int(my_url.split('?spid=')[-1])
-                sid = int(url.split('?spid=')[-1])
+                product = {"product_name": p_name, "our_price": p_price, "seller_price": price, "seller_name": seller_name, "our_url": my_url, "seller_url": url}
+                products.append(product)
 
-                if price <= p_price:
-                    print('Price is lowwer than our price ({} ₫) ---------> save it.'.format(p_price))
-                    product = {"product_name": p_name, "our_price": p_price, "seller_price": price, "seller_name": seller_name, "our_url": my_url, "seller_url": url}
-                    products.append(product)
+                count+=1
+                # if count > 2:
+                #     break
             except:
                 pass
 
@@ -110,7 +114,7 @@ def search_function(browser, url_list):
     results = []
     for i, url in enumerate(url_list):
         print('\n{}/{}: scraping product url: {}'.format(i, total, url))
-        products = tiki_search_products(browser, url.strip())
+        products = tiki_search_sililiar_products(browser, url.strip())
         if len(products) is not 0:
             lowest_price_product = find_lowest_price_product(products)
             results.append(lowest_price_product)
