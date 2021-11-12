@@ -30,10 +30,6 @@ def save_to_xls_file(products):
     #close excel file:
     wb.save('tiki_report.xls')
 
-def get_product_id(url):
-    pid = url.strip().split('?spid=')[-1]
-    return int(pid)
-
 def find_lowest_price_product(products):
     """
     find product have the lowest price

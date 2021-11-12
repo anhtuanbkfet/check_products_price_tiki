@@ -1,32 +1,51 @@
 from time import sleep
+import random
 from web_driver import init_browser
 
 
-def get_all_product_url(browser, shop_url):
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
+def get_product_id(url):
+    pid = url.strip().split('?spid=')[-1]
+    return int(pid)
+
+def get_all_product_url(browser, shop_url, delay_time = 3):
     
     browser.get(shop_url+'?t=product')
     product_urls = []
 
-    sleep(4)
+    sleep(6)
+
     # auto click to expand all products:
-    while True:
+    counter = 1
+    while True:    
         try:
-            browser.find_elements_by_class_name('ViewMoreBtn__Wrapper-sc-qs9ydg-0')[0].click()
+            element = WebDriverWait(browser, 5).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@class="ViewMoreBtn__Wrapper-sc-qs9ydg-0 cFmjcu"]')))
+            element.click()
+            print('{}. Auto clicked to \'ViewMore\' button to view more items....'.format(counter))
+            counter+=1
+            sleep(delay_time)
         except:
             break
-        print('Auto clicked to \'Expand\' button to view more items....')
-        sleep(1)
-
-    # find data
+   
+    # find all items data
     print('Done, now get all items url....')
     counter = 0 
     try:
-        products = browser.find_elements_by_class_name('Product__Wrapper-sc-n99tp2-0')
+        products = browser.find_elements_by_xpath('//*[@class="Product__Wrapper-sc-n99tp2-0 gKQGzQ"]')
+        # products = browser.find_elements_by_class_name('Product__Wrapper-sc-n99tp2-0')
+        print ('Find out {} products, now duplicate checking...'.format(len(products)))
         for product in products:
-            url = product.get_attribute("href")
-            url = url.replace(' ', '').replace('\t', '')
-            product_urls.append(url)
-            
+            url = product.get_attribute("href").strip()
+            if url in product_urls:
+                print('url is duplicated:\n{}'.format(url))
+                continue
+            product_urls.append(url)     
+     
             counter+=1
             print('[{}] url found: {}'.format(counter, url))
     except:
