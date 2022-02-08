@@ -34,9 +34,9 @@ def init_browser():
         download_url(url_download, chrome_excute_file)
 
     options = webdriver.ChromeOptions()
-    # options.add_argument("--start-maximized")
-    options.add_argument("--headless")
-    options.add_argument('--disable-logging')
+    options.add_argument("--start-maximized")
+    # options.add_argument("--headless")
+    # options.add_argument('--disable-logging')
 
     browser = webdriver.Chrome(executable_path=chrome_excute_file, options=options)
     return browser
@@ -75,7 +75,7 @@ def get_all_product_url(browser, shop_url, delay_time = 3):
     print('Done, now get all items url....')
     counter = 0 
     try:
-        products = browser.find_elements_by_xpath('//*[@class="Product__Wrapper-sc-n99tp2-0 gKQGzQ"]')
+        products = browser.find_elements_by_xpath('//*[@class="Product__Wrapper-sc-n99tp2-0 Product___StyledWrapper-sc-n99tp2-1 gMgInl"]')
         # products = browser.find_elements_by_class_name('Product__Wrapper-sc-n99tp2-0')
         print ('Find out {} products, now duplicate checking...'.format(len(products)))
         for product in products:
