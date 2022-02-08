@@ -34,9 +34,9 @@ def init_browser():
         download_url(url_download, chrome_excute_file)
 
     options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
-    # options.add_argument("--headless")
-    # options.add_argument('--disable-logging')
+    # options.add_argument("--start-maximized")
+    options.add_argument("--headless")
+    options.add_argument('--disable-logging')
 
     browser = webdriver.Chrome(executable_path=chrome_excute_file, options=options)
     return browser
